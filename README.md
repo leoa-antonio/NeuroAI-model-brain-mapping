@@ -77,16 +77,16 @@ RSA reveals how high-level geometry of representations evolves across network de
 
 ## 📁 Repository Structure
 ```
-NeuroAI/
+NeuroAI-model-brain-mapping/
+│
 ├── encoding_models/
-│   ├── data/
 │   ├── data_loading.py
 │   ├── feature_extraction.py
 │   ├── model_fitting.py
 │   ├── evaluation.py
 │   ├── visualization.py
-│   ├── demo_algonauts.py
-│   └── README.md
+│   ├── README.md
+│   └── demo_algonauts.ipynb
 │
 ├── rsa_tools/
 │   ├── compute_rdm.py
@@ -94,17 +94,27 @@ NeuroAI/
 │   ├── brain_data.py
 │   ├── rsa_compare.py
 │   ├── visualization.py
-│   ├── demo_algonauts_rsa.ipynb
-│   └── README.md
-|
+│   ├── README.md
+│   └── demo_algonauts_rsa.ipynb
+│
 ├── docs/
-│   ├── figures/
-│   │   ├── example_r2_histogram.png
-│   │   └── roi_layer_similarity.png
-│   └── reference_papers.md
-|
-├── environment.yml 
-└── README.md
+│   ├── reference_papers.md
+│   ├── notes.md
+│   └── figures/
+│
+├── tests/                    
+│   ├── test_compute_rdm.py
+│   └── test_encoding_shapes.py
+│
+├── scripts/                  
+│   ├── run_encoding.sh
+│   └── run_rsa.sh
+│
+├── environment.yml
+├── README.md
+├── LICENSE
+├── CONTRIBUTING.md            
+└── .gitignore
 ```
 ---
 
@@ -145,3 +155,4 @@ python -c "import torch, sklearn, nilearn; print('Environment ready.')"
 
 Notes:
 - Python 3.10 is recommended.
+
