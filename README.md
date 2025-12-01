@@ -1,65 +1,82 @@
-Neural Encoding Models & RSA Toolkit for Model–Brain Correspondence
-Author: Leo Antonio
-Affiliation: NYU Perception & Brain Dynamics Lab, NYU Langone
-Focus: Computational Neuroimaging • Model–Brain Alignment • Representational Geometry
+# Neural Encoding Models & RSA Toolkit for Model–Brain Correspondence
 
-Overview
+**Author:** Leo Antonio  
+**Affiliation:** NYU Perception & Brain Dynamics Lab, NYU Langone  
+**Focus:** Computational Neuroimaging • Model–Brain Alignment • Representational Geometry
+
+---
+
+## Overview
+
 This repository contains two complementary NeuroAI analysis pipelines designed to study correspondences between human brain activity and artificial neural network representations.
 
-Encoding Models — predict voxel-wise fMRI responses from deep network features.
-Representational Similarity Analysis (RSA) — compare representational geometry between brain ROIs and model layers.
-Both pipelines operate on publicly available fMRI datasets (primarily Algonauts 2021) and use pretrained convolutional neural networks (e.g., ResNet50 and Vision Transformers) to extract hierarchical visual features.
+1. **Encoding Models** — predict voxel-wise fMRI responses from deep network features.
+2. **Representational Similarity Analysis (RSA)** — compare representational geometry between brain ROIs and model layers.
+
+Both pipelines operate on publicly available fMRI datasets (primarily **Algonauts 2021**) and use pretrained convolutional neural networks (e.g., **ResNet50** and **Vision Transformers**) to extract hierarchical visual features.
 
 The goal is to evaluate how well modern computer vision models reflect, approximate, or diverge from the representational structure of the human visual system.
 
-1. Encoding Models
-Objective:
+---
+
+# 1. Encoding Models
+
+**Objective:**  
 Predict voxel-level fMRI activation patterns from deep visual features using linear regression.
 
-Pipeline:
+**Pipeline:**
+- Load stimuli and ROI-specific beta patterns
+- Extract features from pretrained ResNet/ViT
+- Fit regularized linear models (**RidgeCV**)
+- Evaluate voxel-wise prediction accuracy (R² score)
 
-Load stimuli and ROI-specific beta patterns
-Extract features from pretrained ResNet/ViT
-Fit regularized linear models (RidgeCV)
-Evaluate voxel-wise prediction accuracy (R² score)
-Outputs:
+**Outputs:**
+- ResNet/ViT feature matrices (n_stimuli × n_features)
+- Voxel-response matrices (n_stimuli × n_voxels)
+- RidgeCV models and predictions
+- Performance histograms and summary statistics
 
-ResNet/ViT feature matrices (n_stimuli × n_features)
-Voxel-response matrices (n_stimuli × n_voxels)
-RidgeCV models and predictions
-Performance histograms and summary statistics
-Scientific Motivation:
+**Scientific Motivation:**  
 Encoding models provide direct tests of whether linear combinations of deep network features can explain measured neural responses. They are foundational in computational neuroscience, vision science, and NeuroAI model evaluation.
 
-Demo Notebook: (fill in later)
+**Demo Notebook:**
+(fill in later)
 
-markdown Copy code
+markdown
+Copy code
 
-2. Representational Similarity Analysis (RSA Tools)
-Objective:
+---
+
+# 2. Representational Similarity Analysis (RSA Tools)
+
+**Objective:**  
 Quantify similarity between representational geometry in the brain and model activations across network layers.
 
-Pipeline:
+**Pipeline:**
+- Compute Representational Dissimilarity Matrices (RDMs)
+- Compare model-layer RDMs to brain-ROI RDMs
+- Evaluate layer-wise correspondence using correlation metrics
 
-Compute Representational Dissimilarity Matrices (RDMs)
-Compare model-layer RDMs to brain-ROI RDMs
-Evaluate layer-wise correspondence using correlation metrics
-Core Scripts:
+**Core Scripts:**
+- `compute_rdm.py` — distance-based RDMs (correlation, cosine, Euclidean)
+- `rsa_compare.py` — upper-triangle similarity metrics
+- `visualization.py` — RDM heatmaps and layer-correlation curves
 
-compute_rdm.py — distance-based RDMs (correlation, cosine, Euclidean)
-rsa_compare.py — upper-triangle similarity metrics
-visualization.py — RDM heatmaps and layer-correlation curves
-Outputs:
+**Outputs:**
+- brain RDMs from ROI beta patterns
+- model RDMs from deep feature vectors
+- correlation coefficients per layer/ROI
 
-brain RDMs from ROI beta patterns
-model RDMs from deep feature vectors
-correlation coefficients per layer/ROI
-Scientific Motivation:
+**Scientific Motivation:**  
 RSA reveals how high-level geometry of representations evolves across network depth, and whether networks recapitulate known cortical hierarchies (e.g., early layers → EVC, deeper layers → IT).
 
-Demo Notebook: (fill in later)
+**Demo Notebook:**
+(fill in later)
 
-📁 Repository Structure
+---
+
+## 📁 Repository Structure
+```
 NeuroAI/
 ├── encoding_models/
 │   ├── data/
@@ -88,32 +105,43 @@ NeuroAI/
 |
 ├── environment.yml 
 └── README.md
-Dataset
-Algonauts 2021
+```
+---
+
+# Dataset
+
+### Algonauts 2021
 Chosen for:
+- real fMRI beta maps per stimulus
+- ROI-resolved responses (EVC, LOC, FFA, etc.)
+- Standard benchmark for model-brain correspondence work
 
-real fMRI beta maps per stimulus
-ROI-resolved responses (EVC, LOC, FFA, etc.)
-Standard benchmark for model-brain correspondence work
 Data Sources:
+- image stimuli
+- voxel response matrices per ROI
+- subject-averaged responses
 
-image stimuli
-voxel response matrices per ROI
-subject-averaged responses
-⚙️ Installation
+
+## ⚙️ Installation
+
 To reproduce the analyses in this repository, create a dedicated Conda environment and install the required dependencies.
 
-Option 1 — Using environment.yml (recommended)
-conda env create -f environment.yml conda activate neuroai
+### Option 1 — Using environment.yml (recommended)
 
-Option 2 — Manual setup
-conda create -n neuroai python=3.10 conda activate neuroai pip install numpy scipy scikit-learn matplotlib pillow pip install torch torchvision pip install nilearn
+conda env create -f environment.yml
+conda activate neuroai
 
-Verify installation
+### Option 2 — Manual setup
+
+conda create -n neuroai python=3.10
+conda activate neuroai
+pip install numpy scipy scikit-learn matplotlib pillow
+pip install torch torchvision
+pip install nilearn
+
+## Verify installation
+
 python -c "import torch, sklearn, nilearn; print('Environment ready.')"
 
 Notes:
-
-Python 3.10 is recommended.
-All scripts and notebooks assume execution inside the neuroai environment.
-GPU is optional for this project; CPU is sufficient.
+- Python 3.10 is recommended.
