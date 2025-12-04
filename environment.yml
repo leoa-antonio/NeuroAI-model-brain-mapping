@@ -1,13 +1,42 @@
-name: neuroai
+hannels:
+  - pytorch
+  - conda-forge
+  - defaults
+
 dependencies:
+  # Core
   - python=3.10
-  - numpy
-  - scipy
-  - scikit-learn
-  - matplotlib
-  - pillow
   - pip
-  - pip:
-    - torch
-    - torchvision
-    - nilearn
+
+  # Array + numerics
+  - numpy=1.26
+  - scipy=1.13
+  - h5py
+
+  # ML / stats
+  - scikit-learn=1.5
+  - statsmodels
+
+  # Data handling
+  - pandas=2.2
+
+  # Plotting / viz
+  - matplotlib=3.8
+  - seaborn=0.13
+
+  # Deep learning + vision
+  - pytorch=2.2
+  - torchvision=0.17
+  - torchaudio=2.2
+
+  # Neuro / fMRI stack
+  - nibabel
+  - nilearn
+
+  # Utils
+  - pillow        # image loading for feature_extraction
+  - tqdm          # progress bars
+
+  # Notebooks
+  - jupyterlab
+  - ipykernel
