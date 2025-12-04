@@ -1,1 +1,14 @@
+# Datasets
+encoding_models/data/
+*.npy
+*.npz
+*.png
+*.jpg
+*.jpeg
+
+# Python cache
+__pycache__/
+*.pyc
+
+# OS junk
 .DS_Store
