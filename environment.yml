@@ -1,4 +1,4 @@
-hannels:
+Channels:
   - pytorch
   - conda-forge
   - defaults
@@ -40,3 +40,4 @@ dependencies:
   # Notebooks
   - jupyterlab
   - ipykernel
+
