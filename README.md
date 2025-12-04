@@ -1,7 +1,6 @@
 # Neural Encoding Models & RSA Toolkit for Model–Brain Correspondence
 
 **Author:** Leo Antonio  
-**Affiliation:** NYU Perception & Brain Dynamics Lab, NYU Langone  
 **Focus:** Computational Neuroimaging • Model–Brain Alignment • Representational Geometry
 
 ---
@@ -185,5 +184,6 @@ python -c "import torch, sklearn, nilearn; print('Environment ready.')"
 
 Notes:
 - Python 3.10 is recommended.
+
 
 
