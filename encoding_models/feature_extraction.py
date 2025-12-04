@@ -5,74 +5,61 @@ import numpy as np
 from PIL import Image
 
 import torch
-from torchvision import models, transforms
+from torchvision import models
+from torchvision.models import ResNet50_Weights
 
-def get_resnet50_model():
+
+def get_resnet50_model_and_transform():
     """
-    Load a pretrained ResNet50 model.
-    We will use it only as a feature extractor (no training).
+    Load a pretrained ResNet50 and its corresponding preprocessing transforms.
     """
-    model = models.resnet50(pretrained=True)
+    weights = ResNet50_Weights.DEFAULT
+    model = models.resnet50(weights=weights)
     model.eval()
-    return model
+    preprocess = weights.transforms()
+    return model, preprocess
 
-def get_preprocess_transform():
-    """
-    Standard ImageNet preprocessing for ResNet.
-    """
-    return transforms.Compose([
-        transforms.Resize(256),
-        transforms.CenterCrop(224),
-        transforms.ToTensor(),
-        transforms.Normalize(
-            mean=[0.485, 0.456, 0.406],
-            std=[0.229, 0.224, 0.225],
-        ),
-    ])
 
 def extract_resnet_avgpool_features(image_paths):
     """
     Extract 2048-dim features from the 'avgpool' layer of ResNet50
     for each image in image_paths.
 
+    Args:
+        image_paths: list of paths to image files
+
     Returns:
         features: numpy array of shape (n_images, 2048)
     """
-    model = get_resnet50_model()
-    preprocess = get_preprocess_transform()
+    model, preprocess = get_resnet50_model_and_transform()
 
-    # We will hook into the 'avgpool' layer
-    layer_name = "avgpool"
+    # This will hold one 2048-dim vector per image
     features_list = []
 
+    # Hook function to capture the avgpool output
     def hook_fn(module, input, output):
         # output has shape (1, 2048, 1, 1) -> flatten to (2048,)
         feat = output.detach().cpu().numpy().reshape(-1)
         features_list.append(feat)
 
-    # Register hook
-    handle = dict(model.named_modules())[layer_name].register_forward_hook(hook_fn)
+    # Register the hook ONCE, before looping over images
+    handle = model.avgpool.register_forward_hook(hook_fn)
 
+    # Loop over images and run a forward pass for each
     for path in image_paths:
         img = Image.open(path).convert("RGB")
         x = preprocess(img).unsqueeze(0)  # shape (1, 3, 224, 224)
-        features_list.clear()
+
         with torch.no_grad():
             _ = model(x)
-        # features_list[0] now contains the features for this image
-        features_list[0].setflags(write=False)  # just to be safe
-        # Collect a copy
-        feat_copy = np.array(features_list[0], copy=True)
-        features_list.append(feat_copy)
 
-    # Remove the hook
+    # Remove the hook after we're done
     handle.remove()
 
-    # Stack all feature vectors
-    # NOTE: we stored each feature vector twice above, but we only want the last copy
-    # So just take every second element: indices 1, 3, 5, ...
-    feats = np.array(features_list[1::2])
-    return feats
+    # Stack all feature vectors into (n_images, 2048)
+    features = np.stack(features_list, axis=0)
+    return features
+
 
 if __name__ == "__main__":
     # Simple test: extract features from all images in test_images/
@@ -81,7 +68,7 @@ if __name__ == "__main__":
 
     if len(image_paths) == 0:
         print("Put some .jpg or .png files into encoding_models/test_images/ and run again.")
-        exit()
+        raise SystemExit
 
     features = extract_resnet_avgpool_features(image_paths)
     print("Feature matrix shape:", features.shape)  # (n_images, 2048)
