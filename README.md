@@ -40,7 +40,7 @@ Predict voxel-level fMRI activation patterns from deep visual features using lin
 Encoding models provide direct tests of whether linear combinations of deep network features can explain measured neural responses. They are foundational in computational neuroscience, vision science, and NeuroAI model evaluation.
 
 **Demo Notebook:**
-(fill in later)
+(In Progress)
 
 markdown
 Copy code
@@ -71,7 +71,7 @@ Quantify similarity between representational geometry in the brain and model act
 RSA reveals how high-level geometry of representations evolves across network depth, and whether networks recapitulate known cortical hierarchies (e.g., early layers → EVC, deeper layers → IT).
 
 **Demo Notebook:**
-(fill in later)
+(In Progress)
 
 ---
 
@@ -118,18 +118,48 @@ NeuroAI-model-brain-mapping/
 ```
 ---
 
-# Dataset
+# 🧠 Dataset
 
-### Algonauts 2021
-Chosen for:
-- real fMRI beta maps per stimulus
-- ROI-resolved responses (EVC, LOC, FFA, etc.)
-- Standard benchmark for model-brain correspondence work
+## Algonauts Project 2023 – Model-to-Brain Mapping Challenge
 
-Data Sources:
-- image stimuli
-- voxel response matrices per ROI
-- subject-averaged responses
+This project uses the **Algonauts 2023 Challenge Dataset**, a publicly available benchmark designed to study correspondence between deep neural network representations and human brain activity.
+
+The dataset provides a large-scale, standardized resource for encoding-model research that focuses on **ventral visual cortex** responses to natural images.
+
+---
+
+## What the Dataset Contains
+
+Each subject folder in `encoding_models/data/train_data/` includes:
+
+- **Stimulus Image IDs**
+  - An array mapping each fMRI sample to an image index
+- **ROI-specific fMRI voxel responses**
+  - Multiple `.npy` files, one per cortical region (e.g., `VC`, `EVC`, `IT`, etc.)
+  - Each file is shaped:
+    ```
+    (#stimuli, #voxels_in_ROI)
+    ```
+- **Train/Test split**
+  - `train_data/` contains data used to fit encoding models
+  - `test_data/` contains a held-out set reserved for model evaluation or leaderboard submissions
+
+Image stimuli associated with these IDs are also included in the dataset and can be used to extract deep feature representations from pretrained models.
+
+---
+
+## Why Algonauts 2023?
+
+Chosen because it offers:
+
+- **Real fMRI signals** evoked by natural image viewing
+- **Voxel-wise response matrices** aligned to consistent image IDs
+- **ROI-based parcellation**
+  - Enables analysis of representational differences across cortical areas
+- **Subject-specific data**
+  - Allows per-subject encoding or cross-subject generalization
+- **Standard benchmark in model-brain alignment research**
+  - Used by vision-science labs, ML groups, and neuro-AI initiatives
 
 
 ## ⚙️ Installation
@@ -155,4 +185,5 @@ python -c "import torch, sklearn, nilearn; print('Environment ready.')"
 
 Notes:
 - Python 3.10 is recommended.
+
 
