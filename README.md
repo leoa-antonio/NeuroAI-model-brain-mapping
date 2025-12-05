@@ -18,34 +18,6 @@ The goal is to evaluate how well modern computer vision models reflect, approxim
 
 ---
 
-# 1. Encoding Models
-
-**Objective:**  
-Predict voxel-level fMRI activation patterns from deep visual features using linear regression.
-
-**Pipeline:**
-- Load stimuli and ROI-specific beta patterns
-- Extract features from pretrained ResNet/ViT
-- Fit regularized linear models (**RidgeCV**)
-- Evaluate voxel-wise prediction accuracy (R² score)
-
-**Outputs:**
-- ResNet/ViT feature matrices (n_stimuli × n_features)
-- Voxel-response matrices (n_stimuli × n_voxels)
-- RidgeCV models and predictions
-- Performance histograms and summary statistics
-
-**Scientific Motivation:**  
-Encoding models provide direct tests of whether linear combinations of deep network features can explain measured neural responses. They are foundational in computational neuroscience, vision science, and NeuroAI model evaluation.
-
-**Demo Notebook:**
-(In Progress)
-
-markdown
-Copy code
-
----
-
 # 2. Representational Similarity Analysis (RSA Tools)
 
 **Objective:**  
@@ -79,12 +51,11 @@ RSA reveals how high-level geometry of representations evolves across network de
 NeuroAI-model-brain-mapping/
 │
 ├── encoding_models/
-│   ├── data_loading.py
+│   ├── algonauts_data_loading.py
 │   ├── feature_extraction.py
 │   ├── model_fitting.py
 │   ├── evaluation.py
 │   ├── visualization.py
-│   ├── README.md
 │   └── demo_algonauts.ipynb
 │
 ├── rsa_tools/
@@ -93,22 +64,13 @@ NeuroAI-model-brain-mapping/
 │   ├── brain_data.py
 │   ├── rsa_compare.py
 │   ├── visualization.py
-│   ├── README.md
 │   └── demo_algonauts_rsa.ipynb
 │
 ├── docs/
 │   ├── reference_papers.md
 │   ├── notes.md
 │   └── figures/
-│
-├── tests/                    
-│   ├── test_compute_rdm.py
-│   └── test_encoding_shapes.py
-│
-├── scripts/                  
-│   ├── run_encoding.sh
-│   └── run_rsa.sh
-│
+|
 ├── environment.yml
 ├── README.md
 ├── LICENSE
@@ -122,68 +84,82 @@ NeuroAI-model-brain-mapping/
 ## Algonauts Project 2023 – Model-to-Brain Mapping Challenge
 
 This project uses the **Algonauts 2023 Challenge Dataset**, a publicly available benchmark designed to study correspondence between deep neural network representations and human brain activity.
+  1. Visit the official Algonauts 2023 site (search for “Algonauts 2023 Challenge”).
+  2. Follow their instructions to request and download the training data.
+  3. Place the contents so that you have a structure like:
 
+```
+encoding_models/
+│
+├── data/
+│   ├── train_data/
+|       ├── subj01-009/
+|            ├── subj01/
+|                ├── training_split/
+|                    ├── training_images/
+|                        ├── train-0001_nsd-00013.png
+|                        ├── train-0002_nsd-XXXXX.png
+|                        └── ...
+|                    ├── training_fmri/
+|                        ├── lh_training_fmri.py
+|                        └── rh_training_fmri.py  
+│       ├── subj02-002/
+|       ├── subj03-006/
+|       └── ...
+│            
+└── .gitignore
+```
 The dataset provides a large-scale, standardized resource for encoding-model research that focuses on **ventral visual cortex** responses to natural images.
 
 ---
 
-## What the Dataset Contains
+# ⚙️ Setup & Installation
 
-Each subject folder in `encoding_models/data/train_data/` includes:
+This project provides a `environment.yml` file so that the full environment can be recreated reproducibly via Conda (recommended).
 
-- **Stimulus Image IDs**
-  - An array mapping each fMRI sample to an image index
-- **ROI-specific fMRI voxel responses**
-  - Multiple `.npy` files, one per cortical region (e.g., `VC`, `EVC`, `IT`, etc.)
-  - Each file is shaped:
-    ```
-    (#stimuli, #voxels_in_ROI)
-    ```
-- **Train/Test split**
-  - `train_data/` contains data used to fit encoding models
-  - `test_data/` contains a held-out set reserved for model evaluation or leaderboard submissions
+### 1. Create the neuroai environment
 
-Image stimuli associated with these IDs are also included in the dataset and can be used to extract deep feature representations from pretrained models.
-
----
-
-## Why Algonauts 2023?
-
-Chosen because it offers:
-
-- **Real fMRI signals** evoked by natural image viewing
-- **Voxel-wise response matrices** aligned to consistent image IDs
-- **ROI-based parcellation**
-  - Enables analysis of representational differences across cortical areas
-- **Subject-specific data**
-  - Allows per-subject encoding or cross-subject generalization
-- **Standard benchmark in model-brain alignment research**
-  - Used by vision-science labs, ML groups, and neuro-AI initiatives
-
-
-## ⚙️ Installation
-
-To reproduce the analyses in this repository, create a dedicated Conda environment and install the required dependencies.
-
-### Option 1 — Using environment.yml (recommended)
-
+```bash
 conda env create -f environment.yml
 conda activate neuroai
+```
+### 2. Run demo as described below
+--- 
 
-### Option 2 — Manual setup
+# 📊 Running the Demo
 
-conda create -n neuroai python=3.10
-conda activate neuroai
-pip install numpy scipy scikit-learn matplotlib pillow
-pip install torch torchvision
-pip install nilearn
+  1. Ensure the Algonauts training data is in data/train_data/ as described above
+  2. Start Jupyterlab
+  3. Open demo_algonauts.ipynb
+  4. Run all cells
+The notebook will:
+  1. Detect available training subjects
+  2. Load fMRI data (lh + rh, concatenated across voxels)
+  3. Reconstruct image paths and align them with fMRI trials
+  4. Extract ResNet50 avgpool features for all training images
+  5. Features are cached to data/features/<subject>_resnet50_features.npy
+  6. On subsequent runs, features are loaded from disk instead of recomputed
+  7. Fit a Ridge(alpha=100) encoding model from features → fMRI
+  8. Compute voxel-wise R² on held-out test samples
+  9. Print summary statistics and plot a histogram of R² across voxels
 
-## Verify installation
+## Example output
 
-python -c "import torch, sklearn, nilearn; print('Environment ready.')"
+For subject subj01-009 (whole brain, ResNet50 avgpool, Ridge alpha=100):
 
-Notes:
-- Python 3.10 is recommended.
+Voxel-wise R² summary:
+  mean R²        : -0.0877
+  median R²      : -0.1198
+  % R² > 0       : 26.3%
 
+The histogram shows a large mass of negative R² (noise voxels) and a clear right tail of voxels with positive R², indicating that ResNet50 features capture visual information represented in a subset of cortical voxels.
 
+--- 
+
+# Acknowledgements
+* Algonauts 2023 Challenge: for providing the fMRI and stimulus data
+* PyTorch / torchvision: for pretrained ResNet50 and image transforms
+* scikit-learn: for Ridge regression and utility tools
+
+Please cite the Algonauts 2023 dataset and relevant methods if you build on this work for publications or reports.
 
