@@ -12,41 +12,69 @@ This repository contains two complementary NeuroAI analysis pipelines designed t
 1. **Encoding Models** — predict voxel-wise fMRI responses from deep network features.
 2. **Representational Similarity Analysis (RSA)** — compare representational geometry between brain ROIs and model layers.
 
-Both pipelines operate on publicly available fMRI datasets (primarily **Algonauts 2021**) and use pretrained convolutional neural networks (e.g., **ResNet50** and **Vision Transformers**) to extract hierarchical visual features.
+Both pipelines operate on publicly available fMRI datasets (primarily **Algonauts 2023**) and use pretrained convolutional neural networks (e.g., **ResNet50**) to extract hierarchical visual features.
 
 The goal is to evaluate how well modern computer vision models reflect, approximate, or diverge from the representational structure of the human visual system.
 
+This repository serves as a portfolio project in neuroAI, beginning with encoding models and extending into RSA as the next key step in model–brain alignment.
+
 ---
+
+# 1. Encoding Model
+
+An end-to-end encoding model pipeline mapping deep neural network features to human fMRI responses using the **Algonauts 2023 Challenge** dataset.
+
+The goal of this repo is to provide a clean, modular example of:
+
+- Loading real fMRI data from Algonauts 2023
+- Linking each trial to its corresponding stimulus image
+- Extracting **ResNet50** features (ImageNet-pretrained, avgpool layer)
+- Fitting a **Ridge regression** encoding model (features → voxel responses)
+- Evaluating performance with voxel-wise **held-out R²**
+- Visualizing the **distribution of voxel R²** (histogram)
 
 # 2. Representational Similarity Analysis (RSA Tools)
 
-**Objective:**  
-Quantify similarity between representational geometry in the brain and model activations across network layers.
+Tools for computing representational similarity between model features and fMRI voxel responses using the **Algonauts 2023 Challenge** dataset.
 
-**Pipeline:**
-- Compute Representational Dissimilarity Matrices (RDMs)
-- Compare model-layer RDMs to brain-ROI RDMs
-- Evaluate layer-wise correspondence using correlation metrics
+The goal of this module is to provide a clean, modular example of:
 
-**Core Scripts:**
-- `compute_rdm.py` — distance-based RDMs (correlation, cosine, Euclidean)
-- `rsa_compare.py` — upper-triangle similarity metrics
-- `visualization.py` — RDM heatmaps and layer-correlation curves
+* Computing Representational Dissimilarity Matrices (RDMs) from:
+  * model-layer activations
+  * ROI-specific brain voxel patterns
+* Comparing model-layer RDMs to brain RDMs
+* Evaluating alignment using upper-triangle similarity metrics
+  (e.g., Spearman correlation)
 
-**Outputs:**
-- brain RDMs from ROI beta patterns
-- model RDMs from deep feature vectors
-- correlation coefficients per layer/ROI
+RSA offers a complementary view to encoding models by examining whether the *geometry* of neural representations within a network mirrors geometry in human cortex.
 
-**Scientific Motivation:**  
-RSA reveals how high-level geometry of representations evolves across network depth, and whether networks recapitulate known cortical hierarchies (e.g., early layers → EVC, deeper layers → IT).
-
-**Demo Notebook:**
-(In Progress)
+**Status:**  
+🚧 *In Progress* — notebook and core RSA utilities are currently under development.
 
 ---
 
-## 📁 Repository Structure
+### Planned Core Components
+
+- `compute_rdm.py`
+  - Generate RDMs from matrix-like inputs using correlation, cosine, or Euclidean distance
+
+- `model_features.py`
+  - Extract activations from multiple network layers for RSA comparisons
+
+- `brain_data.py`
+  - Load ROI-level voxel response matrices for brain RDM computation
+
+- `rsa_compare.py`
+  - Correlate model RDMs with brain RDMs (upper-triangle comparisons)
+
+- `visualization.py`
+  - Plot:
+    - RDM heatmaps
+    - layer-wise model–brain correlation curves
+
+---
+
+# 📁 Repository Structure
 ```
 NeuroAI-model-brain-mapping/
 │
@@ -148,9 +176,9 @@ The notebook will:
 For subject subj01-009 (whole brain, ResNet50 avgpool, Ridge alpha=100):
 
 Voxel-wise R² summary:
-  mean R²        : -0.0877
-  median R²      : -0.1198
-  % R² > 0       : 26.3%
+mean R²        : -0.0877
+median R²      : -0.1198
+% R² > 0       : 26.3%
 
 The histogram shows a large mass of negative R² (noise voxels) and a clear right tail of voxels with positive R², indicating that ResNet50 features capture visual information represented in a subset of cortical voxels.
 
@@ -162,4 +190,5 @@ The histogram shows a large mass of negative R² (noise voxels) and a clear righ
 * scikit-learn: for Ridge regression and utility tools
 
 Please cite the Algonauts 2023 dataset and relevant methods if you build on this work for publications or reports.
+
 
