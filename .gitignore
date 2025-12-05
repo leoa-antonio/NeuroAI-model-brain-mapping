@@ -46,22 +46,8 @@ env/
 # -------------------------
 # Large Data
 # (Algonauts dataset, external fmri, or any user data)
-# NEVER commit licensed/large data to GitHub
 # -------------------------
 data/
 
-# -------------------------
-# Optional: Feature Cache Files
-# Uncomment if you prefer to exclude extracted features
-# NOTE: keeping one example feature file in the repo can be useful
-# -------------------------
-# data/features/
-# data/features/*.npy
-
-# -------------------------
-# Optional: Figures
-# Keep or ignore depending on repo goals
-# -------------------------
-# figs/
 
 
