@@ -175,10 +175,10 @@ The notebook will:
 
 For subject subj01-009 (whole brain, ResNet50 avgpool, Ridge alpha=100):
 
-Voxel-wise R² summary:
-mean R²        : -0.0877
-median R²      : -0.1198
-% R² > 0       : 26.3%
+**Voxel-wise R² summary (subj01-009):**  
+mean R²: -0.0877<br>
+median R²: -0.1198<br>
+% R² > 0: 26.3%
 
 The histogram shows a large mass of negative R² (noise voxels) and a clear right tail of voxels with positive R², indicating that ResNet50 features capture visual information represented in a subset of cortical voxels.
 
@@ -190,5 +190,6 @@ The histogram shows a large mass of negative R² (noise voxels) and a clear righ
 * scikit-learn: for Ridge regression and utility tools
 
 Please cite the Algonauts 2023 dataset and relevant methods if you build on this work for publications or reports.
+
 
 
