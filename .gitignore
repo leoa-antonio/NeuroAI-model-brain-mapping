@@ -44,8 +44,7 @@ env/
 *.bak
 
 # -------------------------
-# Large Data
-# (Algonauts dataset, external fmri, or any user data)
+# Algonauts Dataset
 # -------------------------
 data/
 
